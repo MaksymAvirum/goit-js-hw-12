@@ -1,9 +1,3 @@
-// створи екземпляр SimpleLightbox для роботи з модальним вікном та зберігай функції для відображення елементів інтерфейсу:
-// createGallery(images).Ця функція повинна приймати масив images, створювати HTML - розмітку для галереї,
-//     додавати її в контейнер галереї та викликати метод екземпляра SimpleLightbox refresh().Нічого не повертає.
-// clearGallery().Ця функція нічого не приймає та повинна очищати вміст контейнера галереї.Нічого не повертає.
-// showLoader().Ця функція нічого не приймає, повинна додавати клас для відображення лоадера.Нічого не повертає.
-// hideLoader().Ця функція нічого не приймає, повинна прибирати клас для відображення лоадера.Нічого не повертає.
 
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -29,7 +23,7 @@ export function createGallery(images) {
                 </li>`;
         })
         .join('');
-    gallery.innerHTML = markup;
+    gallery.insertAdjacentHTML('beforeend', markup);
     galleryLightbox.refresh();
 }
 
@@ -37,11 +31,20 @@ export function clearGallery() {
     gallery.innerHTML = '';
 }
 
-const loader = document.querySelector('.loader');
+const loader = document.querySelector('.div-loader');
 export function showLoader() {
     loader.classList.remove('hidden');
 }
 
 export function hideLoader() {
     loader.classList.add('hidden');
+}
+
+const loadMore = document.querySelector(`.btn-load-more`);
+export function showLoadMoreButton() {
+    loadMore.classList.remove('hidden');
+}
+
+export function hideLoadMoreButton() {
+    loadMore.classList.add('hidden');
 }

@@ -97,10 +97,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.hidden {
-  display: none;
+  margin: 10px;
+  gap: 20px;
 }
 
 .gallery {
@@ -128,4 +126,28 @@
   justify-content: space-between;
   gap: 5px;
   text-align: center;
+}
+
+.btn-load-more {
+  margin: 10px auto;
+  display: block;
+  border-radius: 8px;
+  padding: 8px 16px;
+  width: 125px;
+  height: 40px;
+  background: #4e75ff;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #fff;
+  border: none;
+}
+
+.btn-load-more:hover {
+  background-color: #6c8cff;
+}
+
+.hidden {
+  display: none;
 }

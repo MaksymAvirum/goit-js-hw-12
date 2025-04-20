@@ -1,33 +1,93 @@
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 import { getImagesByQuery } from './js/pixabay-api';
-import { clearGallery, createGallery, hideLoader, showLoader } from './js/render-functions';
+import {
+    clearGallery,
+    createGallery,
+    hideLoader,
+    showLoader,
+    showLoadMoreButton,
+    hideLoadMoreButton,
+} from './js/render-functions';
 const form = document.querySelector('.form');
+let page = 1;
+let totalPages = 1;
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
     event.preventDefault();
     const query = form.elements['search-text'].value;
     clearGallery();
     if (query === '') {
-        iziToast.error({ message: 'Please enter a search query!', position: 'topRight' });
+        iziToast.error({
+            message: 'Please enter a search query!',
+            position: 'topRight',
+        });
         return;
     }
     showLoader();
-    const data = getImagesByQuery(query);
-    data.then(response => {
+
+    try {
+        const response = await getImagesByQuery(query, page);
+
         if (response.hits.length === 0) {
             iziToast.error({
-                message: 'Sorry, there are no images matching your search query. Please try again!',
-                position: 'topRight'
+                message:
+                    'Sorry, there are no images matching your search query. Please try again!',
+                position: 'topRight',
             });
             return;
         }
         createGallery(response.hits);
-    }).catch(() => {
-        iziToast.error({ message: "❌ Error fetching images from PIXABAY`", position: 'topRight' });
-    })
-        .finally(() => {
-            hideLoader();
+
+        totalPages = Math.ceil(response.totalHits / 15);
+        if (totalPages > 1) {
+            showLoadMoreButton();
+        }
+    }
+    catch (error) {
+        iziToast.error({
+            message: '❌ Error fetching images from PIXABAY`',
+            position: 'topRight',
         });
+    }
+    finally {
+        hideLoader();
+    };
+
     form.reset();
 });
+
+const loadMoreBtn = document.querySelector('.btn-load-more');
+loadMoreBtn.addEventListener('click', moreBtnClick);
+async function moreBtnClick() {
+    page += 1;
+    hideLoadMoreButton();
+    showLoader();
+    try {
+        const response = await getImagesByQuery(query, page);
+        createGallery(response.hits);
+
+        const { height: cardHeight } = document
+            .querySelector('.gallery-item')
+            .getBoundingClientRect();
+        window.scrollBy({
+            top: cardHeight * 2,
+            behavior: 'smooth',
+        });
+
+        if (page >= totalPages) {
+            hideLoadMoreButton();
+            iziToast.info({
+                message: 'You have reached the end of search results'
+            });
+        } else {
+            showLoadMoreButton();
+        }
+
+    } catch (error) {
+        iziToast.error({
+            message: '❌ Error fetching images from PIXABAY`',
+            position: 'topRight',
+        });
+    }
+}
