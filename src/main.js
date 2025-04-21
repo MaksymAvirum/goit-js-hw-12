@@ -10,7 +10,7 @@ import {
     hideLoadMoreButton,
 } from './js/render-functions';
 const form = document.querySelector('.form');
-let page = 1;
+let page = null;
 let totalPages = 1;
 let query = "";
 
@@ -18,6 +18,7 @@ form.addEventListener('submit', async event => {
     event.preventDefault();
     query = form.elements['search-text'].value;
     clearGallery();
+    page = 1;
     if (query === '') {
         iziToast.error({
             message: 'Please enter a search query!',
@@ -31,6 +32,7 @@ form.addEventListener('submit', async event => {
         const response = await getImagesByQuery(query, page);
 
         if (response.hits.length === 0) {
+            hideLoadMoreButton();
             iziToast.error({
                 message:
                     'Sorry, there are no images matching your search query. Please try again!',
@@ -41,17 +43,19 @@ form.addEventListener('submit', async event => {
         createGallery(response.hits);
 
         totalPages = Math.ceil(response.totalHits / 15);
-        if (totalPages > 1) {
-            showLoadMoreButton();
-        } else {
+        if (totalPages <= page) {
             iziToast.info({
                 message: 'You have reached the end of search results'
             });
+
+        } else {
+            showLoadMoreButton();
         }
+
     }
     catch (error) {
         iziToast.error({
-            message: '❌ Error fetching images from PIXABAY`',
+            message: '❌ Error fetching images from PIXABAY',
             position: 'topRight',
         });
     }
@@ -91,10 +95,11 @@ async function moreBtnClick() {
 
     } catch (error) {
         iziToast.error({
-            message: '❌ Error fetching images from PIXABAY`',
+            message: '❌ Error fetching images from PIXABAY',
             position: 'topRight',
         });
     } finally {
         hideLoader();
     };
 }
+
