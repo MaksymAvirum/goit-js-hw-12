@@ -10,12 +10,13 @@ import {
     hideLoadMoreButton,
 } from './js/render-functions';
 const form = document.querySelector('.form');
-let page = null;
+let page = 1;
 let totalPages = null;
 let query = "";
 
 form.addEventListener('submit', async event => {
     event.preventDefault();
+    hideLoadMoreButton();
     query = form.elements['search-text'].value;
     clearGallery();
     page = 1;
@@ -76,13 +77,15 @@ async function moreBtnClick() {
         const response = await getImagesByQuery(query, page);
         createGallery(response.hits);
 
-        const { height: cardHeight } = document
-            .querySelector('.gallery-item')
-            .getBoundingClientRect();
-        window.scrollBy({
-            top: cardHeight * 2,
-            behavior: 'smooth',
-        });
+        const cards = document.querySelectorAll(".gallery-item");
+        if (cards.length > 0) {
+            const cardsHeight = cards[cards.length - 1].getBoundingClientRect().height;
+            window.scrollBy({
+                left: 0,
+                top: cardsHeight * 2,
+                behavior: "smooth",
+            });
+        }
 
         if (page >= totalPages) {
             hideLoadMoreButton();
