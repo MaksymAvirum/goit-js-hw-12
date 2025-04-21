@@ -43,6 +43,10 @@ form.addEventListener('submit', async event => {
         totalPages = Math.ceil(response.totalHits / 15);
         if (totalPages > 1) {
             showLoadMoreButton();
+        } else {
+            iziToast.info({
+                message: 'You have reached the end of search results'
+            });
         }
     }
     catch (error) {
