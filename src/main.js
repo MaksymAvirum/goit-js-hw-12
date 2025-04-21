@@ -11,7 +11,7 @@ import {
 } from './js/render-functions';
 const form = document.querySelector('.form');
 let page = null;
-let totalPages = 1;
+let totalPages = null;
 let query = "";
 
 form.addEventListener('submit', async event => {
