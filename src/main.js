@@ -12,10 +12,11 @@ import {
 const form = document.querySelector('.form');
 let page = 1;
 let totalPages = 1;
+let query = "";
 
 form.addEventListener('submit', async event => {
     event.preventDefault();
-    const query = form.elements['search-text'].value;
+    query = form.elements['search-text'].value;
     clearGallery();
     if (query === '') {
         iziToast.error({
@@ -89,5 +90,7 @@ async function moreBtnClick() {
             message: '❌ Error fetching images from PIXABAY`',
             position: 'topRight',
         });
-    }
+    } finally {
+        hideLoader();
+    };
 }
